@@ -53,6 +53,7 @@ function App() {
   return (
     <div className="App">
       <div className="container">
+      <h1>Student Registration</h1>
         <label>Student Name: </label>
         <input type="text" name="sname" autoComplete='off' value={inputData.sname} onChange={handlechange} placeholder="Enter Student Name" required />
 
