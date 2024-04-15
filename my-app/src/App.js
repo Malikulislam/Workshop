@@ -1,165 +1,109 @@
-import logo from "./logo.svg";
 import "./App.css";
-import { useState,useEffect } from "react";
+import React, { useState } from "react";
 
 function App() {
-  const data = localStorage.getItem("studentRecord");
-  console.log(data);
+  const [inputarr,setInputarr]=useState([]);
+  const [inputData,setinputData]=useState({
+    sname:"",
+    phoneNo:"",
+    email:"",
+    enno:"",
+    address:""
+  });
 
-  const [name, setName] = useState("");
-  const [mobileNumber, setMobile] = useState("");
-  const [email, setEmail] = useState("");
-  const [eNumber, setENumber] = useState("");
-  const [Dob,setDob]=useState("");
-  const [address,setaddress]=useState("");
-  const [studentsRecords, setStudent] = useState([]);
-  const [nameError, setNameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [phoneError, setPhoneError] = useState('');
-  const validateName = () => {
-    if (name === '') {
-      return "*"
-      
-    }
-    return '';
-  };
-  const validateEmail = () => {
-    if (email === '') {
-      return '*';
-    }
-    return '';
-  };
-  const validatePhone = () => {
-    if (mobileNumber === '') {
-      return '*';
-    }
-    return '';
-  };
-  const onSubmit = (event) => {
-    let jsonData = {
-      name: name,
-      mobile: mobileNumber,
-      email: email,
-      eNumber: eNumber,
-      Dob:Dob,
-      address:address
-    };
-    event.preventDefault();
-    const nameError = validateName();
-    const emailError = validateEmail();
-    const phoneError = validatePhone();
-    if (nameError || emailError || phoneError) {
-      setNameError(nameError);
-      setEmailError(emailError);
-      setPhoneError(phoneError);
-      return;
+  function handlechange(e) {
+ 
+    const value = e.target.value;
+    if (e.target.name === 'sname') {
+      const regex = /^[a-zA-Z ]+$/;
+      if (!regex.test(value)) {
+        return;
+      }
     }
     
-    studentsRecords.push(jsonData);
-    setStudent(studentsRecords);
-  };
-  useEffect(() => {
-    const nameError = validateName();
-  const emailError = validateEmail();
-  const phoneError = validatePhone();
-  setNameError(nameError);
-  setEmailError(emailError);
-  setPhoneError(phoneError);
-}, [name, email, mobileNumber]);
+    setinputData({...inputData, [e.target.name]: value});
 
+    
+  }
+  let {sname,phoneNo,email,enno,address}=inputData;
+  function handleSubmit(){
+   
+  if (sname === '' || phoneNo === '' || email === '' || enno === '' || address === '') {
+    alert('Please fill all data');
+    return false;
+  }
+  if(sname.length>20){
+    alert("Name is too long")
+    return
+  }
+  if(phoneNo.length!==10){
+    alert( "Phone number with 10 digits only");
+    return false;
+  }
+  if(email.length>50){
+    alert("Email is too long")
+  }
+  const existingEnno = inputarr.find(data => data.enno === enno);
+  if (existingEnno) {
+    alert('Enrollment number already exists');
+    return false;
+  }
+    setInputarr([...inputarr,{sname,phoneNo,email,enno,address}]);
+    console.log(inputarr);
+    console.log(inputData);
+    setinputData({sname: '', phoneNo: '', email: '', enno: '', address: ''});
+  }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          <div>
-            <label>
-              Student Name :
-              <input value={name} onChange={(e) => setName(e.target.value)} required />
-              {nameError && <div>{nameError}</div>}
-            </label>{" "}
-          </div>
-          <br></br>
-          <div>
-            <label>
-              Student Phone Number :
-              <input
-                value={mobileNumber}
-                onChange={(e) => setMobile(e.target.value)} required
-              />
-              {phoneError && <div>{phoneError}</div>}
-            </label>{" "}
-          </div>
-          <br></br>
-          <div>
-            <label>
-              Student Email :
-              <input value={email} onChange={(e) => setEmail(e.target.value)} required/>
-              {emailError && <div>{emailError}</div>}
-            </label>{" "}
-          </div>
-          <br></br>
-          <div>
-            <label></label>
-            {"Student En. Number "}
-            <input
-              value={eNumber}
-              onChange={(e) => setENumber(e.target.value)}
-            />
-          </div>
-          <br></br>
-          <div>
-            <label>
-              Student DOB :
-              <input value={Dob} onChange={(e) => setDob(e.target.value)} />
-            </label>{" "}
-          </div>
-          <br></br>
-          <div>
-            <label>
-              Student Address :
-              <input value={address} onChange={(e) => setaddress(e.target.value)} />
-            </label>{" "}
-          </div>
-          <br></br>
-          <br></br>
-          <div>
-            <button onClick={onSubmit}>submit</button>
-          </div>
+        <div className="container">
+        <label>Student Name: </label>
+        <input type="text" name="sname" autoComplete='off' value={inputData.sname} onChange={handlechange} placeholder="Enter Student Name" required/>
+        
+        <br/><br/>
+        <label>Student PhoneNo: </label>
+        <input type="number" name="phoneNo" autoComplete='off' value={inputData.phoneNo} onChange={handlechange} placeholder="Enter Student Phone Number" required/>
+        <br/><br/>
+        <label>Student Email: </label>
+        <input type="text" name="email" autoComplete="off" value={inputData.email} onChange={handlechange} placeholder="Enter Email" required/>
+        <br/><br/>
+        <label>Student Enrollment No: </label>
+        <input type="text" name="enno" autoComplete="off" value={inputData.enno} onChange={handlechange} placeholder="Enter Enrollment No" required/>
+        <br/><br/>
+        <label>Student Address: </label>
+        <input type="text" name="address" autoComplete="off" value={inputData.address} onChange={handlechange} placeholder="Enter Address" required/>
+        <br/><br/>
+        </div>
+        <button onClick={handleSubmit}>Submit</button><br/><br/>
+ 
+       
+        <table>
+          <thead>          
+            <tr>
+            <th>Name</th>
+            <th>PhoneNo</th>
+            <th>EmailId</th>
+            <th>En No.</th>
+            <th>Address</th>
+          </tr>
+          </thead>
 
-          <br></br>
-          
-          <div>
-            <table>
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Mobile</th>
-                <th>email</th>
-                <th>En No.</th>
-                <th>DOB</th>
-                <th>Address</th>
+          <tbody>
+          {inputarr.map((data,index)=>{
+            return (
+              <tr key={index}>
+                <td>{data.sname}</td>
+                <td>{data.phoneNo}</td>
+                <td>{data.email}</td>
+                <td>{data.enno}</td>
+                <td>{data.address}</td>
               </tr>
-              </thead>
-              <tbody>
-              {studentsRecords.map((val, key) => (
-                
-                  <tr key={key}>
-                    <td>{val.name}</td>
-                    <td>{val.mobile}</td>
-                    <td>{val.email}</td>
-                    <td>{val.eNumber}</td>
-                    <td>{val.Dob}</td>
-                    <td>{val.address}</td>
-                  </tr>
-                
-              ))}
+              )
+            })
+          }
               </tbody>
-
-            </table>
-          </div>
-        </p>
-      </header>
+        </table>
+      
     </div>
   );
 }
