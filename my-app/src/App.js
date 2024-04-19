@@ -1,8 +1,11 @@
+
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState} from "react";
+import axios from 'axios';  
 
 function App() {
   const [inputarr, setInputarr] = useState([]);
+  const [post, setPost] = React.useState([]);
   const [inputData, setinputData] = useState({
     sname: "",
     phoneNo: "",
@@ -10,6 +13,11 @@ function App() {
     enno: "",
     address: ""
   });
+  React.useEffect(() => {
+    axios.get('https://reqres.in/api/users?page=2').then((response) => {
+      setPost(response.data.data);
+  });
+},[]);
   function handlechange(e) {
 
     const value = e.target.value;
@@ -19,7 +27,24 @@ function App() {
         return;
       }
     }
-    setinputData({ ...inputData, [e.target.name]: value });
+    if(e.target.name==="phoneNo")
+    {
+      const  phoneregex=/^\d{0,10}$/;
+      if(!phoneregex.test(value)){
+        alert("Phone number should  be of 10 digits");
+        return;
+      }
+    }
+    // if (e.target.name === 'email') {
+    //   const emailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    //   if (!emailregex.test(value)) {
+    //     alert("Please enter a valid Email Address!");
+    //     return;
+    //   }
+    // }
+    setinputData({...inputData, [e.target.name]: value });
+
   }
   let { sname, phoneNo, email, enno, address } = inputData;
   function handleSubmit() {
@@ -72,34 +97,30 @@ function App() {
         <br /><br />
       </div>
       <button onClick={handleSubmit}>Submit</button><br /><br />
-
-
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>PhoneNo</th>
-            <th>EmailId</th>
-            <th>En No.</th>
-            <th>Address</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>AVtar</th>
           </tr>
         </thead>
-
         <tbody>
-          {inputarr.map((data, index) => {
+          {post.map((data, index) => {
             return (
               <tr key={index}>
-                <td>{data.sname}</td>
-                <td>{data.phoneNo}</td>
+                <td>{data.first_name}</td>
+                <td>{data.last_name}</td>
                 <td>{data.email}</td>
-                <td>{data.enno}</td>
-                <td>{data.address}</td>
+              
+                <td><img src={data.avatar} alt=" Not found"></img></td>
               </tr>
             )
           })
           }
         </tbody>
-      </table>
+      </table>/
 
     </div>
   );
